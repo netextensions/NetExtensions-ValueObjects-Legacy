@@ -12,6 +12,7 @@ namespace Test
         [TestCase("20180518")]
         [TestCase("19000101")]
         [TestCase("20401230")]
+        [TestCase("18481230")]
         public void TestEquality(string stringValue)
         {
             var eq1 = DateValue.Create(stringValue);
