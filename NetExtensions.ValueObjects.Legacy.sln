@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetExtensions.ValueObjects.Legacy", "NetExtensions.ValueObjects.Legacy.csproj", "{9BD481B5-1025-40CC-8B45-3F2AF565CEE7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{1A9D6C6B-1E0B-423A-B495-1BF973770672}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{9BD481B5-1025-40CC-8B45-3F2AF565CEE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BD481B5-1025-40CC-8B45-3F2AF565CEE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BD481B5-1025-40CC-8B45-3F2AF565CEE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A9D6C6B-1E0B-423A-B495-1BF973770672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A9D6C6B-1E0B-423A-B495-1BF973770672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A9D6C6B-1E0B-423A-B495-1BF973770672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A9D6C6B-1E0B-423A-B495-1BF973770672}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
