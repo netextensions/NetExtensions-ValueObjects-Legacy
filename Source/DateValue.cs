@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Globalization;
-using LanguageExt;
 using NetExtensions.ValueObject.Legacy;
 
 namespace NetExtensions.ValueObjects.Legacy
 {
     public class DateValue : ValueObject<DateValue>
     {
-       private readonly Option<DateTime> _value;
-
-       private DateValue()
+        private DateValue(DateTime? dateTime)
         {
-            _value = Option<DateTime>.None;
+            if (dateTime.HasValue)
+            {
+                dateValue = dateTime.Value.Date;
+            }
         }
 
         private DateValue(DateTime dateTime)
         {
-            _value = dateTime;
+            dateValue = dateTime.Date;
         }
 
-        public Option<DateTime> Value => _value.Match(dt=> dt.Date, () => Option<DateTime>.None);
+        public DateTime? dateValue { get; }
 
         public static DateValue Create(DateTime dateTime)
         {
@@ -28,7 +28,7 @@ namespace NetExtensions.ValueObjects.Legacy
         
         public static DateValue Create(DateTime? dateTime)
         {
-            return dateTime.Match(dt => new DateValue(dt), () => new DateValue());
+            return new DateValue(dateTime);
         }
 
         public static DateValue Create(string dateTimeString, bool lastCentury = false)
@@ -38,7 +38,7 @@ namespace NetExtensions.ValueObjects.Legacy
             const string yyMMdd = "yyMMdd";
             
             if (string.IsNullOrEmpty(dateTimeString))
-                return new DateValue();
+                return new DateValue(null);
 
             var stringDate = dateTimeString.Trim();
             if (DateTime.TryParseExact(stringDate, new[] {yyyyMMddhhssmm, yyyyMMdd}, null, DateTimeStyles.None, out var date))
@@ -60,12 +60,18 @@ namespace NetExtensions.ValueObjects.Legacy
             if (other == null)
                 return false;
 
-            return other.Value == Value;
+            if (!other.dateValue.HasValue && !dateValue.HasValue)
+                return true;
+            
+            if (other.dateValue.HasValue != dateValue.HasValue)
+                return false;
+
+            return other.dateValue.Value.Date == dateValue.Value.Date;
         }
 
         protected override int GetHashCodeCustom()
         {
-            return Value.GetHashCode();
+            return dateValue.GetHashCode();
         }
     }
 }
