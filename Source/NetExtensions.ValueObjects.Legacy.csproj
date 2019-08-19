@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="LanguageExt.Core" Version="3.3.16" />
     <PackageReference Include="NetExtensions.ValueObject-Legacy" Version="1.0.0" />
   </ItemGroup>
 
