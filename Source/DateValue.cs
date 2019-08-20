@@ -10,7 +10,9 @@ namespace NetExtensions.ValueObjects.Legacy
     public class DateValue : ValueObject<DateValue>
     {
         private readonly Option<DateTime> _value;
-
+        private const string YyyyMMddhhssmm = "yyyyMMddhhssmm";
+        private const string YyyyMMdd = "yyyyMMdd";
+        private const string YyMMdd = "yyMMdd";
         private DateValue()
         {
             _value = Option<DateTime>.None;
@@ -40,18 +42,14 @@ namespace NetExtensions.ValueObjects.Legacy
 
         public static DateValue Create(string dateTimeString, bool lastCentury = false)
         {
-            const string yyyyMMddhhssmm = "yyyyMMddhhssmm";
-            const string yyyyMMdd = "yyyyMMdd";
-            const string yyMMdd = "yyMMdd";
-
             if (string.IsNullOrEmpty(dateTimeString))
                 return new DateValue();
 
             var stringDate = dateTimeString.Trim();
-            if (TryParse(stringDate, new[] { yyyyMMddhhssmm, yyyyMMdd }, out var date))
+            if (TryParse(stringDate, new[] { YyyyMMddhhssmm, YyyyMMdd }, out var date))
                 return new DateValue(date);
 
-            if (!TryParse(stringDate, yyMMdd, out var lastCenturyDate))
+            if (!TryParse(stringDate, YyMMdd, out var lastCenturyDate))
                 throw new InvalidCastException($"given string is invalid: {dateTimeString}");
 
             // do not use TwoDigitYearMax!
@@ -73,8 +71,11 @@ namespace NetExtensions.ValueObjects.Legacy
             return new DateValue(parsed);
         }
 
-
-        public static DateValue Create(string dateTimeString, int fromYearBelongsToPreviousCentury, params string[] formats)
+        public static DateValue Create(string dateTimeString, int fromYearBelongsToPreviousCentury)
+        {
+           return Create(dateTimeString, fromYearBelongsToPreviousCentury,new[] { YyyyMMddhhssmm, YyyyMMdd, YyMMdd });
+        }
+        public static DateValue Create(string dateTimeString, int fromYearBelongsToPreviousCentury, string[] formats)
         {
             if (string.IsNullOrEmpty(dateTimeString) || formats == null || formats.Length == 0)
                 return new DateValue();
@@ -85,8 +86,6 @@ namespace NetExtensions.ValueObjects.Legacy
             );
             return new DateValue(parsed);
         }
-
-
         private static Option<DateTime> Parse(string stringDate, IEnumerable<string> formats)
         {
             var enumerable = formats.ToArray();
