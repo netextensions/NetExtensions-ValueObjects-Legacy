@@ -86,12 +86,12 @@ namespace Test
         [TestCase("20170101","20170101")]
         public void TestEqualityCentury_PreviousCentury(string stringValue, string expected)
         {
-            var i = 1918;
-            var eq1 = DateValue.Create(stringValue, i);
-            var eq2 = DateValue.Create(stringValue, i);
+            var fromYearBelongsToPreviousCentury = 1918;
+            var eq1 = DateValue.Create(stringValue, fromYearBelongsToPreviousCentury);
+            var eq2 = DateValue.Create(stringValue, fromYearBelongsToPreviousCentury);
             Assert.AreEqual(eq1, eq2);
             Assert.AreEqual(eq1.GetHashCode(), eq2.GetHashCode());
-            Assert.AreEqual( expected,eq1.Value.Match(x=>x.Date.ToString("yyyyMMdd"), ()=> ""));
+            Assert.AreEqual( expected,eq1.Value.Match(x=>x.Date.ToString("yyyyMMdd"), error=> ""));
 
         }
         

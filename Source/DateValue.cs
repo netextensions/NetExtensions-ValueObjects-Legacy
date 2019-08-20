@@ -9,13 +9,13 @@ namespace NetExtensions.ValueObjects.Legacy
 {
     public class DateValue : ValueObject<DateValue>
     {
-        private readonly Option<DateTime> _value;
+        private readonly Validation<string, DateTime> _value;
         private const string YyyyMMddhhssmm = "yyyyMMddhhssmm";
         private const string YyyyMMdd = "yyyyMMdd";
         private const string YyMMdd = "yyMMdd";
         private DateValue()
         {
-            _value = Option<DateTime>.None;
+            _value = "empty date";
         }
 
         private DateValue(DateTime dateTime)
@@ -23,12 +23,12 @@ namespace NetExtensions.ValueObjects.Legacy
             _value = dateTime;
         }
 
-        private DateValue(Option<DateTime> dateTime)
+        private DateValue(Validation<string, DateTime> dateTime)
         {
             _value = dateTime;
         }
 
-        public Option<DateTime> Value => _value.Match(dt => dt.Date, () => Option<DateTime>.None);
+        public Validation<string, DateTime> Value => _value.Match<Validation<string, DateTime>>(dt=> dt.Date,error =>error);
 
         public static DateValue Create(DateTime dateTime)
         {
@@ -50,8 +50,8 @@ namespace NetExtensions.ValueObjects.Legacy
                 return new DateValue(date);
 
             if (!TryParse(stringDate, YyMMdd, out var lastCenturyDate))
-                throw new InvalidCastException($"given string is invalid: {dateTimeString}");
-
+                return new DateValue($"given string is invalid: {dateTimeString}");
+     
             // do not use TwoDigitYearMax!
             if (Math.Floor((decimal)lastCenturyDate.Year / 100) >= Math.Floor((decimal)DateTime.Now.Year / 100))
             {
@@ -66,7 +66,7 @@ namespace NetExtensions.ValueObjects.Legacy
 
             var stringDate = dateTimeString.Trim();
             var parsed = Parse(stringDate, formats.Where(x => x.Length >= 8)).Match(dt => dt,
-                () => ParseWithoutCenturies(stringDate, formats.Where(x => x.Length == 6), lastCentury)
+                error => ParseWithoutCenturies(stringDate, formats.Where(x => x.Length == 6), lastCentury)
             );
             return new DateValue(parsed);
         }
@@ -82,26 +82,29 @@ namespace NetExtensions.ValueObjects.Legacy
 
             var stringDate = dateTimeString.Trim();
             var parsed = Parse(stringDate, formats.Where(x => x.Length >= 8)).Match(dt => dt,
-                () => ParseWithoutCenturies(stringDate, formats.Where(x => x.Length == 6), fromYearBelongsToPreviousCentury)
+                error => ParseWithoutCenturies(stringDate, formats.Where(x => x.Length == 6), fromYearBelongsToPreviousCentury)
             );
             return new DateValue(parsed);
         }
-        private static Option<DateTime> Parse(string stringDate, IEnumerable<string> formats)
+        private static Validation<string, DateTime> Parse(string stringDate, IEnumerable<string> formats)
         {
             var enumerable = formats.ToArray();
             if (!enumerable.Any())
-                return Option<DateTime>.None;
+                return "no format is found";
 
-            return TryParse(stringDate, enumerable, out var date) ? date : Option<DateTime>.None;
+            if (TryParse(stringDate, enumerable, out var date))
+                return date;
+            
+            return $"given string is invalid: {stringDate}";
         }
-        private static Option<DateTime> ParseWithoutCenturies(string stringDate, IEnumerable<string> formats, bool lastCentury)
+        private static Validation<string, DateTime> ParseWithoutCenturies(string stringDate, IEnumerable<string> formats, bool lastCentury)
         {
             var enumerable = formats.ToArray();
             if (!enumerable.Any())
-                return Option<DateTime>.None;
+                return "no format is found";
 
             if (!TryParse(stringDate, enumerable, out var lastCenturyDate))
-                throw new InvalidCastException($"given string is invalid: {stringDate}");
+                return $"given string is invalid: {stringDate}";
 
             if (Math.Floor((decimal)lastCenturyDate.Year / 100) >= Math.Floor((decimal)DateTime.Now.Year / 100))
             {
@@ -110,17 +113,18 @@ namespace NetExtensions.ValueObjects.Legacy
             return lastCentury ? lastCenturyDate : lastCenturyDate.AddYears(100);
         }
 
-        private static Option<DateTime> ParseWithoutCenturies(string stringDate, IEnumerable<string> formats, int fromYearBelongsToPreviousCentury)
+        private static Validation<string, DateTime> ParseWithoutCenturies(string stringDate, IEnumerable<string> formats, int fromYearBelongsToPreviousCentury)
         {
             var enumerable = formats.ToArray();
             if (!enumerable.Any())
-            {
-                return Option<DateTime>.None;
-            }
+                return "no format is found";
 
             var culture = new CultureInfo("en-US");
             culture.Calendar.TwoDigitYearMax = fromYearBelongsToPreviousCentury + 99;
-            return TryParse(stringDate, enumerable, out var parsedFromShortDate, culture) ? parsedFromShortDate : throw new InvalidCastException($"given string is invalid: {stringDate}");
+            if (TryParse(stringDate, enumerable, out var parsedFromShortDate, culture))
+                return parsedFromShortDate;
+            
+            return $"given string is invalid: {stringDate}";
         }
 
         protected override bool EqualsCustom(DateValue other)
