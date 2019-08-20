@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Description>named constructors for commonly used types</Description>
     <Copyright></Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -12,11 +12,11 @@
     <PackageTags>ValueObject, ddd</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetExtensions.ValueObjects-Legacy</PackageId>
-    <PackageVersion>1.0.3</PackageVersion>
+    <PackageVersion>1.0.4</PackageVersion>
     <AssemblyName>NetExtensions.ValueObjects-Legacy</AssemblyName>
     <RootNamespace>NetExtensions.ValueObjects.Legacy</RootNamespace>
-    <AssemblyVersion>1.0.0.3</AssemblyVersion>
-    <FileVersion>1.0.0.3</FileVersion>
+    <AssemblyVersion>1.0.0.4</AssemblyVersion>
+    <FileVersion>1.0.0.4</FileVersion>
     <Authors>netextensions.io</Authors>
   </PropertyGroup>
 

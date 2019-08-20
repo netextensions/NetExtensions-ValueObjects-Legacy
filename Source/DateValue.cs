@@ -73,6 +73,20 @@ namespace NetExtensions.ValueObjects.Legacy
             return new DateValue(parsed);
         }
 
+
+        public static DateValue Create(string dateTimeString, int fromYearBelongsToPreviousCentury, params string[] formats)
+        {
+            if (string.IsNullOrEmpty(dateTimeString) || formats == null || formats.Length == 0)
+                return new DateValue();
+
+            var stringDate = dateTimeString.Trim();
+            var parsed = Parse(stringDate, formats.Where(x => x.Length >= 8)).Match(dt => dt,
+                () => ParseWithoutCenturies(stringDate, formats.Where(x => x.Length == 6), fromYearBelongsToPreviousCentury)
+            );
+            return new DateValue(parsed);
+        }
+
+
         private static Option<DateTime> Parse(string stringDate, IEnumerable<string> formats)
         {
             var enumerable = formats.ToArray();
@@ -90,12 +104,24 @@ namespace NetExtensions.ValueObjects.Legacy
             if (!TryParse(stringDate, enumerable, out var lastCenturyDate))
                 throw new InvalidCastException($"given string is invalid: {stringDate}");
 
-            // do not use TwoDigitYearMax!
             if (Math.Floor((decimal)lastCenturyDate.Year / 100) >= Math.Floor((decimal)DateTime.Now.Year / 100))
             {
                 return lastCentury ? lastCenturyDate.AddYears(-100) : lastCenturyDate;
             }
             return lastCentury ? lastCenturyDate : lastCenturyDate.AddYears(100);
+        }
+
+        private static Option<DateTime> ParseWithoutCenturies(string stringDate, IEnumerable<string> formats, int fromYearBelongsToPreviousCentury)
+        {
+            var enumerable = formats.ToArray();
+            if (!enumerable.Any())
+            {
+                return Option<DateTime>.None;
+            }
+
+            var culture = new CultureInfo("en-US");
+            culture.Calendar.TwoDigitYearMax = fromYearBelongsToPreviousCentury + 99;
+            return TryParse(stringDate, enumerable, out var parsedFromShortDate, culture) ? parsedFromShortDate : throw new InvalidCastException($"given string is invalid: {stringDate}");
         }
 
         protected override bool EqualsCustom(DateValue other)
@@ -110,9 +136,9 @@ namespace NetExtensions.ValueObjects.Legacy
         {
             return Value.GetHashCode();
         }
-
-        private static bool TryParse(string stringDate, string format, out DateTime result) => TryParse(stringDate, new[] { format }, out result);
-        private static bool TryParse(string stringDate, string[] formats, out DateTime result) => DateTime.TryParseExact(stringDate, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out result);
+        
+        private static bool TryParse(string stringDate, string format, out DateTime result, CultureInfo cultureInfo = null) => TryParse(stringDate, new[] { format }, out result, cultureInfo);
+        private static bool TryParse(string stringDate, string[] formats, out DateTime result, CultureInfo cultureInfo = null) => DateTime.TryParseExact(stringDate, formats, cultureInfo ?? CultureInfo.InvariantCulture, DateTimeStyles.None, out result);
 
 
     }
