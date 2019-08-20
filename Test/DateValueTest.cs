@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace Test
 {
     [TestFixture]
-    public class DateValueEqualityTest
+    public class DateValueTest
     {
         
         [TestCase("")]
@@ -77,7 +77,7 @@ namespace Test
             Assert.AreEqual(eq1.GetHashCode(), eq2.GetHashCode());
         }
         
-        [TestCase("", "")]
+        [TestCase("", "empty date")]
         [TestCase("180518","19180518")]
         [TestCase("401230","19401230")]
         [TestCase("991230","19991230")]
@@ -91,12 +91,45 @@ namespace Test
             var eq2 = DateValue.Create(stringValue, fromYearBelongsToPreviousCentury);
             Assert.AreEqual(eq1, eq2);
             Assert.AreEqual(eq1.GetHashCode(), eq2.GetHashCode());
-            Assert.AreEqual( expected,eq1.Value.Match(x=>x.Date.ToString("yyyyMMdd"), error=> ""));
+            Assert.AreEqual( expected,eq1.Value.Match(x=>x.Date.ToString("yyyyMMdd"), error=> error.First()));
 
         }
         
-        
-        
-        
+        [TestCase("", "empty date",true, "yyMMdd")]
+        [TestCase("180518","19180518",true, "yyMMdd")]
+        [TestCase("401230","19401230", true, "yyMMdd")]
+        [TestCase("991230","19991230", true, "yyMMdd")]
+        [TestCase("560101","19560101", true, "yyMMdd")]
+        [TestCase("170101","19170101", true, "yyMMdd")]
+        public void TestEqualityCentury_PreviousCentury_lastCentury_True(string stringValue, string expected,bool lastCentury, string format)
+        {
+
+            var eq1 = DateValue.Create(stringValue, lastCentury, format);
+            var eq2 = DateValue.Create(stringValue, lastCentury,format);
+            Assert.AreEqual(eq1, eq2);
+            Assert.AreEqual(eq1.GetHashCode(), eq2.GetHashCode());
+            Assert.AreEqual( expected,eq1.Value.Match(x=>x.Date.ToString("yyyyMMdd"), error=> error.First()));
+
+        }
+
+
+        [TestCase("", "empty date", false, "yyMMdd")]
+        [TestCase("180518", "20180518", false, "yyMMdd")]
+        [TestCase("401230", "20401230", false, "yyMMdd")]
+        [TestCase("991230", "20991230", false, "yyMMdd")]
+        [TestCase("560101", "20560101", false, "yyMMdd")]
+        [TestCase("170101", "20170101", false, "yyMMdd")]
+        public void TestEqualityCentury_PreviousCentury_lastCentury_False(string stringValue, string expected, bool lastCentury, string format)
+        {
+
+            var eq1 = DateValue.Create(stringValue, lastCentury, format);
+            var eq2 = DateValue.Create(stringValue, lastCentury, format);
+            Assert.AreEqual(eq1, eq2);
+            Assert.AreEqual(eq1.GetHashCode(), eq2.GetHashCode());
+            Assert.AreEqual(expected, eq1.Value.Match(x => x.Date.ToString("yyyyMMdd"), error => error.First()));
+
+        }
+
+
     }
 }
