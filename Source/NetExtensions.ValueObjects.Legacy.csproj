@@ -2,21 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Description>named constructors for commonly used types</Description>
     <Copyright></Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/netextensions/NetExtensions-ValueObjects-Legacy</PackageProjectUrl>
     <RepositoryUrl>https://github.com/netextensions/NetExtensions-ValueObjects-Legacy</RepositoryUrl>
-    <PackageReleaseNotes>remove languageext.Core dependency/ remove option, added datetime?</PackageReleaseNotes>
+    <PackageReleaseNotes>added customdate value valueobject, others will follow</PackageReleaseNotes>
     <PackageTags>ValueObject, ddd</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>NetExtensions.ValueObjects-Legacy</PackageId>
-    <PackageVersion>1.0.2</PackageVersion>
+    <PackageVersion>1.0.3</PackageVersion>
     <AssemblyName>NetExtensions.ValueObjects-Legacy</AssemblyName>
     <RootNamespace>NetExtensions.ValueObjects.Legacy</RootNamespace>
-    <AssemblyVersion>1.0.0.2</AssemblyVersion>
-    <FileVersion>1.0.0.2</FileVersion>
+    <AssemblyVersion>1.0.0.3</AssemblyVersion>
+    <FileVersion>1.0.0.3</FileVersion>
     <Authors>netextensions.io</Authors>
   </PropertyGroup>
 
