@@ -18,6 +18,7 @@
     <AssemblyVersion>1.0.0.4</AssemblyVersion>
     <FileVersion>1.0.0.4</FileVersion>
     <Authors>netextensions.io</Authors>
+    <PackageIconUrl>https://github.com/netextensions/netextensions/raw/master/netExtensions.io.png</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
